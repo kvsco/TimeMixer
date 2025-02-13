@@ -339,7 +339,7 @@ class Model(nn.Module):
             else:
                 self.x_mark_dec = self.enc_embedding(None, x_mark_dec)
 
-        x_enc, x_mark_enc = self.__multi_scale_process_inputs(x_enc, x_mark_enc)
+        x_enc, x_mark_enc = self.__multi_scale_process_inputs(x_enc, x_mark_enc)  # down sampling processing
 
         x_list = []
         x_mark_list = []

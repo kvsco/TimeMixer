@@ -35,7 +35,7 @@ class EarlyStopping:
         self.counter = 0
         self.best_score = None
         self.early_stop = False
-        self.val_loss_min = np.Inf
+        self.val_loss_min = np.inf
         self.delta = delta
 
     def __call__(self, val_loss, model, path):
@@ -87,14 +87,17 @@ def save_to_csv(true, preds=None, name='./pic/test.pdf'):
     data.to_csv(name, index=False, sep=',')
 
 
-def visual(true, preds=None, name='./pic/test.pdf'):
+def visual(true, preds=None, target='feature', name='./pic/test.pdf'):
     """
     Results visualization
     """
     plt.figure()
+    plt.plot(preds, label='Prediction', linewidth=2)
     plt.plot(true, label='GroundTruth', linewidth=2)
-    if preds is not None:
-        plt.plot(preds, label='Prediction', linewidth=2)
+    plt.xlabel('time')
+    plt.ylabel('value')
+    plt.title(target)
+
     plt.legend()
     plt.savefig(name, bbox_inches='tight')
 
