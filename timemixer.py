@@ -49,11 +49,12 @@ class Trainer():
                                             epochs=self.args.train_epochs,
                                             max_lr=self.args.learning_rate)
 
+        self._model.to(self.device)
+        self._model.train()
         for epoch in range(self.args.train_epochs):
             iter_count = 0
             train_loss = []
-            self._model.to(self.device)
-            self._model.train()
+
             epoch_time = time.time()
             for i, (batch_x, batch_y, batch_x_mark, batch_y_mark) in enumerate(train_loader):
                 iter_count += 1
@@ -156,6 +157,7 @@ class Trainer():
         if test:
             print('loading model')
             self._model.load_state_dict(torch.load(os.path.join('./checkpoints/' + setting, 'checkpoint.pth')))
+            self._model.to(self.device)
 
         preds = []
         trues = []
@@ -192,11 +194,11 @@ class Trainer():
 
                 preds.append(pred)
                 trues.append(true)
-                if i % 20 == 0:
+                if i % 10 == 0:
                     input = batch_x.detach().cpu().numpy()
                     if test_data.scale and self.args.inverse:
-                        shape = input.shape
-                        input = test_data.inverse_transform(input.squeeze(0)).reshape(shape)
+                        ishape = input.shape
+                        input = test_data.inverse_transform(input.squeeze(0)).reshape(ishape)
                     gt = np.concatenate((input[0, :, -1], true[0, :, -1]), axis=0)
                     pd = np.concatenate((input[0, :, -1], pred[0, :, -1]), axis=0)
                     # visual(gt, pd, os.path.join(folder_path, str(i) + '.pdf'))
@@ -204,7 +206,6 @@ class Trainer():
 
         preds = np.array(preds)
         trues = np.array(trues)
-        print('test shape:', preds.shape, trues.shape)
         preds = preds.reshape(-1, preds.shape[-2], preds.shape[-1])
         trues = trues.reshape(-1, trues.shape[-2], trues.shape[-1])
         print('test shape:', preds.shape, trues.shape)
